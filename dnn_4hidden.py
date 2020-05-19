@@ -153,6 +153,7 @@ class ModelDNN(object):
                     })
                 print('epoch: {}, MAPE: {}'.format(epoch, accuracy_val))
             save_path = saver.save(sess, '.../tf_bn_model.ckpt')
+         return None
 
             
     def make_prediction(self, model_name, X_val):
