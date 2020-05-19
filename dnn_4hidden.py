@@ -152,6 +152,19 @@ class ModelDNN(object):
                     y: self.y_test
                     })
                 print('epoch: {}, MAPE: {}'.format(epoch, accuracy_val))
-            save_path = saver.save(sess, 'tf_models/tf_bn_model.ckpt')
+            save_path = saver.save(sess, '.../tf_bn_model.ckpt')
+
             
-        return 
+    def make_prediction(self, model_name, X_val):
+        '''Make prediction from saved model file'''
+        
+        saver = tf.train.import_meta_graph('.../{}.meta'.format(model_name))
+        X = tf.get_default_graph().get_tensor_by_name('X:0')
+        outputs = tf.get_default_graph().get_tensor_by_name('outputs/kernel:0')
+        # init = tf.global_variables_initializer()
+        
+        with tf.Session() as sess:
+            saver.restore(sess, '.../{}'.format(model_name))
+            pred = outputs.eval(feed_dict = {X: X_val})
+
+        return pred
