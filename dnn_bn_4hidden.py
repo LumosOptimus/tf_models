@@ -106,17 +106,18 @@ class ModelDNN(object):
         
         X = tf.placeholder(tf.float32, shape = [None, self.n_inputs], name = 'X')
         y = tf.placeholder(tf.float32, shape = [None], name = 'y')
-        training = tf.placeholder_with_default(False, shape = (), name = 'training')       
+        training = tf.placeholder_with_default(False, shape = (), name = 'training')  
         batch_norm_layer = partial(tf.layers.batch_normalization, training = training, momentum = 0.9)
+        he_init = tf.contrib.layers.variance_scaling_initializer()
         
         with tf.name_scope('dnn'):
             hidden1 = tf.layers.dense(X, self.n_hidden1, activation = tf.nn.elu, name = 'hidden1')
             batch_norm1 = batch_norm_layer(hidden1)
-            hidden2 = tf.layers.dense(batch_norm1, self.n_hidden2, activation = tf.nn.elu, name = 'hidden2')
+            hidden2 = tf.layers.dense(batch_norm1, self.n_hidden2, activation = tf.nn.elu, kernel_initializer = he_init, name = 'hidden2')
             batch_norm2 = batch_norm_layer(hidden2)
-            hidden3 = tf.layers.dense(batch_norm2, self.n_hidden3, activation = tf.nn.elu, name = 'hidden3')
+            hidden3 = tf.layers.dense(batch_norm2, self.n_hidden3, activation = tf.nn.elu, kernel_initializer = he_init, name = 'hidden3')
             batch_norm3 = batch_norm_layer(hidden3)
-            hidden4 = tf.layers.dense(batch_norm3, self.n_hidden3, activation = tf.nn.elu, name = 'hidden4')
+            hidden4 = tf.layers.dense(batch_norm3, self.n_hidden3, activation = tf.nn.elu, kernel_initializer = he_init, name = 'hidden4')
             batch_norm4 = batch_norm_layer(hidden4)
             output_before_bn = tf.layers.dense(batch_norm4, self.n_outputs, name = 'outputs')
             output = batch_norm_layer(output_before_bn)
